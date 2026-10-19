@@ -1,0 +1,10 @@
+* Implemented custom media resolver and metadata decoder. (Experimental)
+* Added speed and pitch slider.
+* Fixed incorrect lyrics parsing when content contain CRLF.
+* Fixed popup overflow in Settings.
+* Improved M3U playlist parser.
+* Use Artists separator for Album Artists.
+* Fixed Albums categorization when Artists are different.
+* Improved fuzzy search.
+* Updated translations.
+* This is a hot-fix upon v2024.11.112.

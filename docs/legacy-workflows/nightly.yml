@@ -1,0 +1,75 @@
+name: Nightly
+
+on:
+    workflow_dispatch:
+
+env:
+    SIGNING_KEYSTORE_FILE: ./secrets/signing_key.jks
+    OUTPUT_DIR: ./dist
+
+permissions:
+    contents: write
+
+jobs:
+    nightly-build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: npm
+
+            - uses: actions/setup-java@v4
+              with:
+                  distribution: zulu
+                  java-version: 17
+                  cache: gradle
+
+            - name: 🚧 Do prerequisites
+              run: npm ci
+
+            - name: 🔢 Get version
+              id: app_version
+              run: echo "version=$(npm run --silent version:print-nightly)" >> $GITHUB_OUTPUT
+
+            - name: 🔎 Check for release
+              run: npm run --silent git:tag-exists -- $TAG_NAME
+              env:
+                  TAG_NAME: v${{ steps.app_version.outputs.version }}
+
+            - name: 🔨 Generate certificate
+              run: |
+                  mkdir -p $(dirname $SIGNING_KEYSTORE_FILE)
+                  echo $SIGNING_KEYSTORE_FILE_CONTENT | base64 -di > $SIGNING_KEYSTORE_FILE
+              env:
+                  SIGNING_KEYSTORE_FILE_CONTENT: ${{ secrets.SIGNING_KEYSTORE_FILE }}
+
+            - name: 🔨 Build assets
+              run: |
+                  npm run prebuild
+                  chmod +x ./gradlew
+                  ./gradlew assembleNightly
+                  ./gradlew bundleNightly
+                  npm run postbuild
+              env:
+                  APP_BUILD_TYPE: nightly
+                  APP_VERSION_NAME: ${{ steps.app_version.outputs.version }}
+                  SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+                  SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+                  SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+            - name: 🚀 Upload assets
+              uses: ncipollo/release-action@v1
+              with:
+                  tag: v${{ steps.app_version.outputs.version }}
+                  artifacts: ${{ env.OUTPUT_DIR }}/*
+                  body: "Refer [commits of v${{ steps.app_version.outputs.version }}](https://github.com/zyrouge/symphony/commits/v${{ steps.app_version.outputs.version }}) for the changes."
+                  generateReleaseNotes: false
+                  draft: false
+                  prerelease: true
+                  artifactErrorsFailBuild: true

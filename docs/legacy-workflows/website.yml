@@ -1,0 +1,17 @@
+name: Website
+
+on:
+    workflow_dispatch:
+
+permissions: {}
+
+jobs:
+    website-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - run: |
+                  echo Please run it from the "site" branch.
+                  exit 1

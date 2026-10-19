@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Symphony</string>
+    <string name="lockscreen_controls">Lock screen controls</string>
+    <string name="lockscreen_preview">Preview lock screen</string>
+    <string name="lockscreen_description">Show music controls when you wake your locked phone during playback. On Android 10 and later, allow Display over other apps to enable this feature.</string>
+    <string name="lockscreen_play_first">Play a song to preview lock screen controls.</string>
+    <string name="lockscreen_dismiss">Dismiss controls</string>
+    <string name="lockscreen_unlock">Unlock device</string>
+    <string name="lockscreen_seek">Playback position</string>
+</resources>

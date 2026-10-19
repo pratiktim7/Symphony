@@ -1,0 +1,11 @@
+- Support for embedded lyrics.
+- Fix missing playback bar on notifications.
+- Added Speed & pitch control.
+- Improved animations in Now Playing page.
+- Improved internal MediaStore access.
+- Show mini-player in Search page.
+- Text in mini-player now scrolls when it's too long.
+- Clickable artist name in Now Playing page.
+- Identify and act upon bluetooth headphone actions.
+- Ability to create playlists when adding songs using "Add to playlist".
+- System tones are blacklisted by default.
